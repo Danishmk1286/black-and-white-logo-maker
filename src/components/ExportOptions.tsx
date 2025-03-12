@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, FileImage, FileCode, FilePdf } from 'lucide-react';
+import { Download, FileImage, FileCode, FileText } from 'lucide-react';
 import { 
   convertToSVG, 
   dataURLtoBlob, 
@@ -98,7 +98,7 @@ const ExportOptions: React.FC<ExportOptionsProps> = ({
                 <span>JPG</span>
               </TabsTrigger>
               <TabsTrigger value="pdf" className="flex items-center gap-1">
-                <FilePdf className="h-4 w-4" />
+                <FileText className="h-4 w-4" />
                 <span>PDF</span>
               </TabsTrigger>
             </TabsList>
