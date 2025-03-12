@@ -1,9 +1,9 @@
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Upload, Image as ImageIcon } from 'lucide-react';
 
 interface LogoUploaderProps {
   onImageUploaded: (dataUrl: string) => void;
@@ -14,16 +14,16 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onImageUploaded }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   
-  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
-  }, []);
+  };
   
-  const handleDragLeave = useCallback(() => {
+  const handleDragLeave = () => {
     setIsDragging(false);
-  }, []);
+  };
   
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     
@@ -31,14 +31,14 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onImageUploaded }) => {
       const file = e.dataTransfer.files[0];
       processFile(file);
     }
-  }, []);
+  };
   
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       processFile(file);
     }
-  }, []);
+  };
   
   const openFileDialog = () => {
     if (fileInputRef.current) {
@@ -83,7 +83,7 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onImageUploaded }) => {
   
   // Sample logos
   const sampleLogos = [
-    { name: 'Simple Logo', path: '/placeholder.svg' },
+    { name: 'Sample Logo', path: '/placeholder.svg' },
   ];
   
   const loadSampleLogo = (path: string) => {
@@ -109,11 +109,11 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onImageUploaded }) => {
   };
   
   return (
-    <Card className="panel transition-all duration-300 w-full animate-scale-in">
-      <CardContent className="p-6">
+    <Card className="w-full">
+      <CardContent className="p-4 sm:p-6">
         <div 
           className={`
-            flex flex-col items-center justify-center w-full p-8 
+            flex flex-col items-center justify-center w-full p-4 sm:p-8 
             border-2 border-dashed rounded-xl transition-all duration-200 
             ${isDragging 
               ? 'border-primary bg-primary/5' 
@@ -130,38 +130,36 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onImageUploaded }) => {
             Drag & drop your image here, or click to browse
           </p>
           
-          <div className="flex gap-2 mt-2">
-            <Button 
-              variant="secondary" 
-              onClick={openFileDialog}
-              className="interactive"
-            >
-              Choose File
-            </Button>
-            
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/jpeg,image/png,image/svg+xml"
-              onChange={handleFileChange}
-            />
-          </div>
+          <Button 
+            variant="secondary" 
+            onClick={openFileDialog}
+            className="mb-4"
+          >
+            Choose File
+          </Button>
           
-          <div className="w-full mt-8">
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/jpeg,image/png,image/svg+xml"
+            onChange={handleFileChange}
+          />
+          
+          <div className="w-full mt-4">
             <div className="flex items-center">
               <div className="flex-grow h-px bg-border" />
               <span className="px-3 text-xs text-muted-foreground uppercase">Or use a sample</span>
               <div className="flex-grow h-px bg-border" />
             </div>
             
-            <div className="flex gap-3 mt-4 justify-center">
+            <div className="flex justify-center mt-4">
               {sampleLogos.map((logo) => (
                 <Button 
                   key={logo.name}
                   variant="outline" 
                   size="sm"
-                  className="flex gap-2 interactive"
+                  className="flex gap-2"
                   onClick={() => loadSampleLogo(logo.path)}
                 >
                   <ImageIcon className="h-4 w-4" />

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { convertToBlackAndWhite } from '@/lib/imageUtils';
 
 interface ImageConverterProps {
-  originalImage: string;
+  originalImage: string | null;
   isBlackAndWhite: boolean;
   onToggleBlackAndWhite: (value: boolean) => void;
   onConvertedImage: (dataUrl: string) => void;
@@ -34,8 +34,8 @@ const ImageConverter: React.FC<ImageConverterProps> = ({
   };
   
   return (
-    <Card className="panel w-full animate-scale-in">
-      <CardContent className="p-6">
+    <Card className="w-full">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h3 className="text-lg font-medium">Black & White Conversion</h3>
@@ -50,7 +50,7 @@ const ImageConverter: React.FC<ImageConverterProps> = ({
               id="bw-mode"
               checked={isBlackAndWhite}
               onCheckedChange={handleToggleChange}
-              className="data-[state=checked]:bg-primary"
+              disabled={!originalImage}
             />
           </div>
         </div>
