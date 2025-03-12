@@ -1,16 +1,4 @@
-# Welcome to your Lovable project
-
-## Project info
-
-**URL**: https://lovable.dev/projects/5937f93d-18db-4a99-81dc-d0fb45d0a9e9
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/5937f93d-18db-4a99-81dc-d0fb45d0a9e9) and start prompting.
+# Welcome to your Black & Whtite Logo Variants Creator Online Tool
 
 Changes made via Lovable will be committed automatically to this repo.
 
@@ -59,10 +47,6 @@ This project is built with .
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/5937f93d-18db-4a99-81dc-d0fb45d0a9e9) and click on Share -> Publish.
 
 ## I want to use a custom domain - is that possible?
 
