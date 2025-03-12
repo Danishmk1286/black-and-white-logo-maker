@@ -81,33 +81,6 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onImageUploaded }) => {
     reader.readAsDataURL(file);
   };
   
-  // Sample logos
-  const sampleLogos = [
-    { name: 'Sample Logo', path: '/placeholder.svg' },
-  ];
-  
-  const loadSampleLogo = (path: string) => {
-    fetch(path)
-      .then(response => response.blob())
-      .then(blob => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target && typeof e.target.result === 'string') {
-            onImageUploaded(e.target.result);
-          }
-        };
-        reader.readAsDataURL(blob);
-      })
-      .catch(error => {
-        console.error('Error loading sample logo:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load sample logo",
-          variant: "destructive",
-        });
-      });
-  };
-  
   return (
     <Card className="w-full">
       <CardContent className="p-4 sm:p-6">
@@ -145,29 +118,6 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onImageUploaded }) => {
             accept="image/jpeg,image/png,image/svg+xml"
             onChange={handleFileChange}
           />
-          
-          <div className="w-full mt-4">
-            <div className="flex items-center">
-              <div className="flex-grow h-px bg-border" />
-              <span className="px-3 text-xs text-muted-foreground uppercase">Or use a sample</span>
-              <div className="flex-grow h-px bg-border" />
-            </div>
-            
-            <div className="flex justify-center mt-4">
-              {sampleLogos.map((logo) => (
-                <Button 
-                  key={logo.name}
-                  variant="outline" 
-                  size="sm"
-                  className="flex gap-2"
-                  onClick={() => loadSampleLogo(logo.path)}
-                >
-                  <ImageIcon className="h-4 w-4" />
-                  {logo.name}
-                </Button>
-              ))}
-            </div>
-          </div>
         </div>
       </CardContent>
     </Card>

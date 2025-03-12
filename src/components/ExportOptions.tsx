@@ -1,12 +1,16 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, FileImage, FileCode } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Download, FileImage, FileCode, FilePdf } from 'lucide-react';
 import { 
   convertToSVG, 
   dataURLtoBlob, 
-  downloadFile 
+  downloadFile,
+  exportAsImage
 } from '@/lib/imageUtils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,57 +18,60 @@ interface ExportOptionsProps {
   imageUrl: string;
   originalImageUrl: string;
   backgroundColor: string;
-  isBlackAndWhite: boolean;
+  logoColor: string;
 }
 
 const ExportOptions: React.FC<ExportOptionsProps> = ({ 
   imageUrl, 
   originalImageUrl,
   backgroundColor, 
-  isBlackAndWhite 
+  logoColor 
 }) => {
   const { toast } = useToast();
+  const [includeBackground, setIncludeBackground] = useState(true);
+  const [format, setFormat] = useState<'svg' | 'png' | 'jpg' | 'pdf'>('svg');
   
-  const handleExportSVG = async (withBackground: boolean) => {
+  const currentImage = imageUrl || originalImageUrl;
+  
+  const handleExport = async () => {
     try {
-      const currentImage = isBlackAndWhite ? imageUrl : originalImageUrl;
-      const svgUrl = await convertToSVG(
-        currentImage, 
-        withBackground ? backgroundColor : undefined
-      );
+      if (!currentImage) {
+        toast({
+          title: "No image",
+          description: "Please upload an image first.",
+          variant: "destructive",
+        });
+        return;
+      }
       
-      const filename = `logo_${isBlackAndWhite ? 'bw' : 'color'}_${withBackground ? 'with_bg' : 'transparent'}.svg`;
-      downloadFile(svgUrl, filename);
+      const filename = `logo_${logoColor.replace('#', '')}_${includeBackground ? backgroundColor.replace('#', '') : 'transparent'}.${format}`;
+      
+      if (format === 'svg') {
+        const svgUrl = await convertToSVG(
+          currentImage, 
+          includeBackground ? backgroundColor : undefined
+        );
+        
+        downloadFile(svgUrl, filename);
+      } else {
+        const exportedImage = await exportAsImage(
+          currentImage,
+          format,
+          includeBackground ? backgroundColor : 'transparent'
+        );
+        
+        downloadFile(exportedImage, filename);
+      }
       
       toast({
         title: "Success!",
-        description: `SVG ${withBackground ? 'with background' : 'transparent'} downloaded successfully`,
+        description: `Image exported as ${format.toUpperCase()} successfully`,
       });
     } catch (error) {
-      console.error('Error exporting SVG:', error);
+      console.error('Error exporting image:', error);
       toast({
         title: "Export failed",
-        description: "There was an error exporting your SVG.",
-        variant: "destructive",
-      });
-    }
-  };
-  
-  const handleExportPNG = () => {
-    try {
-      const currentImage = isBlackAndWhite ? imageUrl : originalImageUrl;
-      const filename = `logo_${isBlackAndWhite ? 'bw' : 'color'}.png`;
-      downloadFile(currentImage, filename);
-      
-      toast({
-        title: "Success!",
-        description: "PNG downloaded successfully",
-      });
-    } catch (error) {
-      console.error('Error exporting PNG:', error);
-      toast({
-        title: "Export failed",
-        description: "There was an error exporting your PNG.",
+        description: "There was an error exporting your image.",
         variant: "destructive",
       });
     }
@@ -76,37 +83,52 @@ const ExportOptions: React.FC<ExportOptionsProps> = ({
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Export Options</h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-              onClick={() => handleExportSVG(true)}
-              disabled={!imageUrl}
-            >
-              <FileCode className="h-4 w-4" />
-              <span>SVG with Background</span>
-            </Button>
+          <Tabs defaultValue="svg" className="w-full" onValueChange={(value) => setFormat(value as any)}>
+            <TabsList className="w-full grid grid-cols-4">
+              <TabsTrigger value="svg" className="flex items-center gap-1">
+                <FileCode className="h-4 w-4" />
+                <span>SVG</span>
+              </TabsTrigger>
+              <TabsTrigger value="png" className="flex items-center gap-1">
+                <FileImage className="h-4 w-4" />
+                <span>PNG</span>
+              </TabsTrigger>
+              <TabsTrigger value="jpg" className="flex items-center gap-1">
+                <FileImage className="h-4 w-4" />
+                <span>JPG</span>
+              </TabsTrigger>
+              <TabsTrigger value="pdf" className="flex items-center gap-1">
+                <FilePdf className="h-4 w-4" />
+                <span>PDF</span>
+              </TabsTrigger>
+            </TabsList>
             
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-              onClick={() => handleExportSVG(false)}
-              disabled={!imageUrl}
-            >
-              <FileCode className="h-4 w-4" />
-              <span>SVG Transparent</span>
-            </Button>
-            
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2"
-              onClick={handleExportPNG}
-              disabled={!imageUrl}
-            >
-              <FileImage className="h-4 w-4" />
-              <span>PNG Export</span>
-            </Button>
-          </div>
+            <div className="pt-4">
+              <div className="flex items-center space-x-2 mb-4">
+                <Checkbox 
+                  id="include-bg" 
+                  checked={includeBackground}
+                  onCheckedChange={(checked) => {
+                    if (typeof checked === 'boolean') {
+                      setIncludeBackground(checked);
+                    }
+                  }}
+                />
+                <Label htmlFor="include-bg" className="cursor-pointer">
+                  Include background in export
+                </Label>
+              </div>
+              
+              <Button
+                className="w-full flex items-center justify-center gap-2"
+                onClick={handleExport}
+                disabled={!currentImage}
+              >
+                <Download className="h-4 w-4" />
+                <span>Download as {format.toUpperCase()}</span>
+              </Button>
+            </div>
+          </Tabs>
         </div>
       </CardContent>
     </Card>

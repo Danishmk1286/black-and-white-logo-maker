@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import LogoUploader from '@/components/LogoUploader';
 import ImageConverter from '@/components/ImageConverter';
 import BackgroundPicker from '@/components/BackgroundPicker';
@@ -9,18 +8,17 @@ import ExportOptions from '@/components/ExportOptions';
 
 const Index = () => {
   const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
-  const [bwImageUrl, setBwImageUrl] = useState<string | null>(null);
+  const [customImageUrl, setCustomImageUrl] = useState<string | null>(null);
   const [backgroundColor, setBackgroundColor] = useState('#FFFFFF');
-  const [isBlackAndWhite, setIsBlackAndWhite] = useState(false);
+  const [logoColor, setLogoColor] = useState('#000000');
 
   const handleImageUploaded = (dataUrl: string) => {
     setOriginalImageUrl(dataUrl);
-    setIsBlackAndWhite(false);
-    setBwImageUrl(null);
+    setCustomImageUrl(null);
   };
 
-  const handleBwImageConverted = (dataUrl: string) => {
-    setBwImageUrl(dataUrl);
+  const handleCustomImageConverted = (dataUrl: string) => {
+    setCustomImageUrl(dataUrl);
   };
 
   return (
@@ -29,7 +27,7 @@ const Index = () => {
         <header className="mb-10 text-center">
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Black & White Maker</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Transform your logos to black and white, customize backgrounds, and export in high-quality formats.
+            Transform your logos with custom colors, backgrounds, and export in any format.
           </p>
         </header>
 
@@ -39,9 +37,9 @@ const Index = () => {
             
             <ImageConverter 
               originalImage={originalImageUrl}
-              isBlackAndWhite={isBlackAndWhite}
-              onToggleBlackAndWhite={setIsBlackAndWhite}
-              onConvertedImage={handleBwImageConverted}
+              logoColor={logoColor}
+              onLogoColorChange={setLogoColor}
+              onConvertedImage={handleCustomImageConverted}
             />
             
             <BackgroundPicker 
@@ -52,17 +50,17 @@ const Index = () => {
           
           <div className="space-y-6">
             <Preview 
-              imageUrl={bwImageUrl}
+              imageUrl={customImageUrl}
               originalImageUrl={originalImageUrl}
               backgroundColor={backgroundColor}
-              isBlackAndWhite={isBlackAndWhite}
+              logoColor={logoColor}
             />
             
             <ExportOptions 
-              imageUrl={bwImageUrl || ''}
+              imageUrl={customImageUrl || ''}
               originalImageUrl={originalImageUrl || ''}
               backgroundColor={backgroundColor}
-              isBlackAndWhite={isBlackAndWhite}
+              logoColor={logoColor}
             />
           </div>
         </div>
