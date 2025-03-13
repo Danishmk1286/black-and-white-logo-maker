@@ -1,15 +1,45 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LogoUploader from '@/components/LogoUploader';
 import ExportOptions from '@/components/ExportOptions';
+import { Progress } from '@/components/ui/progress';
+import { Loader2 } from 'lucide-react';
 
 const Index = () => {
   const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
   const [whiteBackgroundColor, setWhiteBackgroundColor] = useState('#FFFFFF');
   const [blackBackgroundColor, setBlackBackgroundColor] = useState('#000000');
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   
   const handleImageUploaded = (dataUrl: string) => {
-    setOriginalImageUrl(dataUrl);
+    // Set loading state to true
+    setIsLoading(true);
+    setProgress(0);
+    
+    // Store the image URL temporarily
+    const tempImageUrl = dataUrl;
+    
+    // Reset the image so loading state is visible
+    setOriginalImageUrl(null);
+    
+    // Simulate a 3-second loading process with progress updates
+    const intervalId = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(intervalId);
+          return 100;
+        }
+        return prev + 3.33; // Roughly 30 steps over 3 seconds
+      });
+    }, 100);
+    
+    // After 3 seconds, set the image URL and finish loading
+    setTimeout(() => {
+      setOriginalImageUrl(tempImageUrl);
+      setIsLoading(false);
+      setProgress(100);
+    }, 3000);
   };
   
   return (
@@ -26,17 +56,32 @@ const Index = () => {
           <div className="w-full border-2 border-dashed border-border rounded-lg p-6 transition-all duration-200 hover:border-primary">
             <LogoUploader onImageUploaded={handleImageUploaded} />
             
-            {!originalImageUrl && (
+            {!originalImageUrl && !isLoading && (
               <div className="mt-6 text-center">
                 <h2 className="text-lg font-medium text-primary">Upload your logo to get started</h2>
                 <p className="text-muted-foreground mt-2">
-                  Once you upload your logo, you'll see black and white previews and be able to customize and export them.
+                  Once you upload your logo, we'll process it and generate black and white variants for you.
                 </p>
               </div>
             )}
           </div>
           
-          {originalImageUrl && (
+          {isLoading && (
+            <div className="py-8 flex flex-col items-center justify-center space-y-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-muted rounded-full">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+              <h3 className="text-lg font-medium">Processing your logo...</h3>
+              <div className="w-full max-w-md">
+                <Progress value={progress} className="h-2" />
+                <p className="text-center text-sm text-muted-foreground mt-2">
+                  Generating black and white variants
+                </p>
+              </div>
+            </div>
+          )}
+          
+          {originalImageUrl && !isLoading && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
