@@ -15,9 +15,15 @@ import { useToast } from '@/hooks/use-toast';
 
 interface ExportOptionsProps {
   originalImageUrl: string;
+  whiteBackgroundColor: string;
+  blackBackgroundColor: string;
 }
 
-const ExportOptions: React.FC<ExportOptionsProps> = ({ originalImageUrl }) => {
+const ExportOptions: React.FC<ExportOptionsProps> = ({ 
+  originalImageUrl,
+  whiteBackgroundColor,
+  blackBackgroundColor
+}) => {
   const { toast } = useToast();
   const [includeBackground, setIncludeBackground] = useState(true);
   const [format, setFormat] = useState<'svg' | 'png' | 'jpg' | 'pdf'>('svg');
@@ -56,7 +62,7 @@ const ExportOptions: React.FC<ExportOptionsProps> = ({ originalImageUrl }) => {
         
         // Apply background if needed
         if (includeBackground) {
-          ctx.fillStyle = logoVariant === 'black' ? '#FFFFFF' : '#000000';
+          ctx.fillStyle = logoVariant === 'black' ? whiteBackgroundColor : blackBackgroundColor;
           ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
         
@@ -80,13 +86,13 @@ const ExportOptions: React.FC<ExportOptionsProps> = ({ originalImageUrl }) => {
         if (format === 'svg') {
           const svgUrl = await convertToSVG(
             processedImageUrl, 
-            includeBackground ? (logoVariant === 'black' ? '#FFFFFF' : '#000000') : undefined
+            includeBackground ? (logoVariant === 'black' ? whiteBackgroundColor : blackBackgroundColor) : undefined
           );
           
           downloadFile(svgUrl, filename);
         } else {
           const backgroundColor = includeBackground 
-            ? (logoVariant === 'black' ? '#FFFFFF' : '#000000') 
+            ? (logoVariant === 'black' ? whiteBackgroundColor : blackBackgroundColor) 
             : 'transparent';
             
           const exportedImage = await exportAsImage(
@@ -116,13 +122,13 @@ const ExportOptions: React.FC<ExportOptionsProps> = ({ originalImageUrl }) => {
   };
   
   return (
-    <Card className="w-full">
-      <CardContent className="p-4 sm:p-6">
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Export Options</h3>
+    <Card className="w-full shadow-md">
+      <CardContent className="p-6">
+        <div className="space-y-6">
+          <h3 className="text-xl font-medium text-center">Export Options</h3>
           
           <Tabs defaultValue="svg" className="w-full" onValueChange={(value) => setFormat(value as any)}>
-            <TabsList className="w-full grid grid-cols-4">
+            <TabsList className="w-full grid grid-cols-2 md:grid-cols-4">
               <TabsTrigger value="svg" className="flex items-center gap-1">
                 <FileCode className="h-4 w-4" />
                 <span>SVG</span>
@@ -141,50 +147,60 @@ const ExportOptions: React.FC<ExportOptionsProps> = ({ originalImageUrl }) => {
               </TabsTrigger>
             </TabsList>
             
-            <div className="pt-4 space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="include-bg" 
-                  checked={includeBackground}
-                  onCheckedChange={(checked) => {
-                    if (typeof checked === 'boolean') {
-                      setIncludeBackground(checked);
-                    }
-                  }}
-                />
-                <Label htmlFor="include-bg" className="cursor-pointer">
-                  Include background in export
-                </Label>
+            <div className="pt-6 space-y-6">
+              <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="include-bg" 
+                    className="h-5 w-5"
+                    checked={includeBackground}
+                    onCheckedChange={(checked) => {
+                      if (typeof checked === 'boolean') {
+                        setIncludeBackground(checked);
+                      }
+                    }}
+                  />
+                  <Label htmlFor="include-bg" className="text-base font-medium cursor-pointer">
+                    Include background in export
+                  </Label>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2 ml-7">
+                  {includeBackground 
+                    ? "Background will be included in the exported file." 
+                    : "Logo will be exported with a transparent background."}
+                </p>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="logo-variant">Logo Variant</Label>
-                <div className="flex space-x-2">
+                <Label htmlFor="logo-variant" className="text-base block">Logo Variant</Label>
+                <div className="grid grid-cols-2 gap-3">
                   <Button
                     id="black-variant"
                     variant={logoVariant === 'black' ? 'default' : 'outline'}
-                    className="flex-1"
+                    className="flex-1 py-6"
                     onClick={() => setLogoVariant('black')}
                   >
                     Black Logo
+                    {includeBackground && <span className="text-xs block mt-1">({whiteBackgroundColor} background)</span>}
                   </Button>
                   <Button
                     id="white-variant"
                     variant={logoVariant === 'white' ? 'default' : 'outline'}
-                    className="flex-1"
+                    className="flex-1 py-6"
                     onClick={() => setLogoVariant('white')}
                   >
                     White Logo
+                    {includeBackground && <span className="text-xs block mt-1">({blackBackgroundColor} background)</span>}
                   </Button>
                 </div>
               </div>
               
               <Button
-                className="w-full flex items-center justify-center gap-2"
+                className="w-full flex items-center justify-center gap-2 py-6 text-lg"
                 onClick={handleExport}
                 disabled={!originalImageUrl}
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-5 w-5" />
                 <span>Download as {format.toUpperCase()}</span>
               </Button>
             </div>
