@@ -8,16 +8,18 @@ Follow these steps:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone <YOUR_GIT_URL> # i.e git clone https://github.com/Danishmk1286/black-and-white-logo-maker.git
 
 # Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+cd <YOUR_PROJECT_NAME> # i.e cd My first project
 
 # Step 3: Install the necessary dependencies.
-npm i
+npm i # If you get this error "packages are looking for funding. run `npm fund` for details." => Solution: Type => npm config set fund=false --location=global
 
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
+
+# In all the process make sure you are inside the main directory folder
 ```
 
 **Edit a file directly in GitHub**
