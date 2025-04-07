@@ -83,12 +83,12 @@ const Index = () => {
           
           {originalImageUrl && !isLoading && (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <h3 className="font-medium text-base">Black Logo Preview</h3>
-                    <div className="flex items-center gap-2">
-                      <label htmlFor="blackBgColor" className="text-xs sm:text-sm">Background:</label>
+                    <h3 className="font-medium text-base truncate">Black Logo Preview</h3>
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                      <label htmlFor="blackBgColor" className="text-xs sm:text-sm whitespace-nowrap">Background:</label>
                       <input 
                         type="color" 
                         id="blackBgColor" 
@@ -118,9 +118,9 @@ const Index = () => {
                 
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <h3 className="font-medium text-base">White Logo Preview</h3>
-                    <div className="flex items-center gap-2">
-                      <label htmlFor="whiteBgColor" className="text-xs sm:text-sm">Background:</label>
+                    <h3 className="font-medium text-base truncate">White Logo Preview</h3>
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                      <label htmlFor="whiteBgColor" className="text-xs sm:text-sm whitespace-nowrap">Background:</label>
                       <input 
                         type="color" 
                         id="whiteBgColor" 

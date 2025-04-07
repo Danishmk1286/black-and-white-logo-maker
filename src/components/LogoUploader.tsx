@@ -72,10 +72,7 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ onImageUploaded }) => {
     reader.onload = (e) => {
       if (e.target && typeof e.target.result === 'string') {
         onImageUploaded(e.target.result);
-        toast({
-          title: "Logo uploaded",
-          description: "Your logo has been successfully uploaded.",
-        });
+        // Success toast removed as requested
       }
     };
     reader.readAsDataURL(file);
